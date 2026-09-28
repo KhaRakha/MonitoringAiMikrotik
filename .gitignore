@@ -1,0 +1,37 @@
+# Environment variables & secrets (JANGAN PERNAH DI-PUSH KE GITHUB)
+.env
+.env.local
+.env.*.local
+
+# Python virtual environment & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Testing & Linting
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Application Logs & Dynamic Data
+logs/*
+!logs/.gitkeep
+data/*
+!data/.gitkeep
+scratch/*
+!scratch/.gitkeep
+
+# System & OS Files
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# IDE & Editors
+.vscode/
+.idea/

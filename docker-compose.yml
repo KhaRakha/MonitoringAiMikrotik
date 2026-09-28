@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  mikrotik-ai-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mikrotik-ai-bot
+    # Always restart if container exits, crashes, or server reboots
+    restart: always
+    environment:
+      - TZ=Asia/Jakarta
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+      - ./logs:/app/logs
+    # network_mode: host memungkinkan bot langsung berkomunikasi dengan IP lokal router (10.20.33.240 / 192.168.88.1)
+    # Jika di Windows atau Mac Docker Desktop, ganti dengan bridge network standard
+    network_mode: "host"

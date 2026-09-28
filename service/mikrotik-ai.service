@@ -1,0 +1,25 @@
+[Unit]
+Description=MikroTik AI Agent Telegram Bot Service
+After=network.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+# Sesuaikan WorkingDirectory dengan lokasi folder proyek di server / VPS Linux Anda
+WorkingDirectory=/opt/mikrotik-ai
+ExecStart=/opt/mikrotik-ai/venv/bin/python /opt/mikrotik-ai/service/watchdog.py
+
+# Auto-recovery: Jika bot crash atau berhenti, systemd akan restart otomatis dalam 5 detik
+Restart=always
+RestartSec=5
+
+# Logging langsung diarahkan ke systemd journal (journalctl -u mikrotik-ai -f)
+StandardOutput=journal
+StandardError=journal
+
+Environment=PYTHONUNBUFFERED=1
+Environment=TZ=Asia/Jakarta
+
+[Install]
+WantedBy=multi-user.target

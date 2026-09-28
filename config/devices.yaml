@@ -1,0 +1,59 @@
+devices:
+- id: kantor_utama
+  name: Kantor Utama
+  aliases:
+  - kantor utama
+  - router utama
+  - main router
+  - kantor
+  host: 10.20.33.240
+  port: 8728
+  protocol: api
+  use_ssl: false
+  username: admin
+  password: magang@2026
+  is_default: true
+  description: Router MikroTik Utama Kantor PTI
+- id: kantor_cabang
+  name: Kantor Cabang
+  aliases:
+  - kantor cabang
+  - cabang
+  - branch
+  host: 192.168.88.1
+  port: 80
+  protocol: rest
+  use_ssl: false
+  username: admin
+  password: ''
+  is_default: false
+  description: Router MikroTik Kantor Cabang
+- id: lab_pti
+  name: Lab PTI
+  aliases:
+  - lab
+  - lab pti
+  - laboratorium
+  host: 192.168.10.1
+  port: 8728
+  protocol: api
+  use_ssl: false
+  username: admin
+  password: ''
+  is_default: false
+  description: Router MikroTik Lab Komputer Jaringan PTI
+- id: mock_demo
+  name: Simulasi Router
+  aliases:
+  - mock
+  - simulasi
+  - demo
+  - virtual router
+  host: 127.0.0.1
+  port: 0
+  protocol: mock
+  use_ssl: false
+  username: admin
+  password: ''
+  is_default: false
+  description: Simulasi Router MikroTik untuk demonstrasi dan testing offline

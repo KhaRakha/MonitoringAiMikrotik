@@ -1,0 +1,79 @@
+"""
+Auto-Recovery Watchdog Supervisor (PRD Section 19).
+Monitors the bot process and automatically restarts it if it crashes or terminates.
+"""
+
+from __future__ import annotations
+
+import os
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+BOT_ENTRYPOINT = PROJECT_ROOT / "service" / "run_bot.py"
+
+# Guard against NoneType stdout/stderr when launched headlessly via wscript/pythonw
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, "w", encoding="utf-8")
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, "w", encoding="utf-8")
+
+
+def get_python_executable() -> str:
+    """Find the best Python executable."""
+    # 1. Current sys.executable
+    if sys.executable and "python" in sys.executable.lower():
+        return sys.executable
+    # 2. Check Hermes venv
+    hermes_py = Path(os.path.expanduser("~")) / "AppData" / "Local" / "hermes" / "hermes-agent" / "venv" / "Scripts" / "python.exe"
+    if hermes_py.exists():
+        return str(hermes_py)
+    # 3. Default python
+    return "python"
+
+
+def run_supervisor():
+    python_exe = get_python_executable()
+    max_restarts = 50
+    restart_count = 0
+    backoff_delay = 5.0
+
+    print("================================================================")
+    print(" MikroTik AI Agent - Auto-Recovery Watchdog Supervisor")
+    print(f" Target script: {BOT_ENTRYPOINT}")
+    print(f" Python binary: {python_exe}")
+    print("================================================================")
+
+    while restart_count < max_restarts:
+        print(f"\n[Watchdog] [{time.strftime('%Y-%m-%d %H:%M:%S')}] Memulai bot (run #{restart_count + 1})...")
+        start_time = time.time()
+
+        try:
+            process = subprocess.Popen(
+                [python_exe, str(BOT_ENTRYPOINT)],
+                cwd=str(PROJECT_ROOT),
+            )
+            ret_code = process.wait()
+            uptime = time.time() - start_time
+            print(f"[Watchdog] Proses bot berhenti dengan kode exit: {ret_code} (Uptime: {uptime:.1f}s)")
+
+            # If process ran for more than 2 minutes, reset restart count
+            if uptime > 120:
+                restart_count = 0
+
+            restart_count += 1
+            print(f"[Watchdog] Auto-recovery: Mempersiapkan restart dalam {backoff_delay} detik...")
+            time.sleep(backoff_delay)
+
+        except KeyboardInterrupt:
+            print("\n[Watchdog] Menerima sinyal keyboard interrupt. Menghentikan supervisor.")
+            break
+        except Exception as e:
+            print(f"[Watchdog] Error tidak terduga pada supervisor: {e}")
+            time.sleep(10.0)
+
+
+if __name__ == "__main__":
+    run_supervisor()

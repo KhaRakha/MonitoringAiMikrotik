@@ -1,0 +1,73 @@
+# ==============================================================================
+# MikroTik AI Agent Automation - System Configuration (config.yaml)
+# ==============================================================================
+
+app:
+  name: "MikroTik AI Agent Automation"
+  version: "1.0.0"
+  description: "AI Network Automation Agent for MikroTik RouterOS via Telegram"
+
+agent:
+  provider: "gemini"               # gemini, openai, openrouter, ollama, heuristic
+  model: "gemini-3.6-flash"
+  temperature: 0.2
+  max_planning_steps: 6
+  language: "id"                   # id (Bahasa Indonesia), en (English)
+  persona: "Hermes Network Engineer"
+
+network:
+  connect_timeout: 5.0
+  read_timeout: 10.0
+  ping_count: 4
+  ping_timeout: 2.0
+  discovery_subnet: "10.20.33.0/24"
+  discovery_ports: [8728, 8729, 8291, 80, 443, 22]
+
+security:
+  # Strict permission tiers as required in PRD Section 17
+  dangerous_operations:
+    - "/system/reset-configuration"
+    - "reset-configuration"
+    - "factory-reset"
+    - "/system/package/uninstall"
+    - "/disk/format"
+    - "remove_all_users"
+    - "disable_all_interfaces"
+
+  write_operations:
+    - "create_hotspot_user"
+    - "delete_hotspot_user"
+    - "set_interface_state"
+    - "update_configuration"
+    - "add_firewall_rule"
+    - "remove_firewall_rule"
+    - "system_reboot"
+    - "system_shutdown"
+    - "set_identity"
+    - "create_system_user"
+    - "delete_system_user"
+    - "set_clock_timezone"
+    - "send_router_email"
+    - "add_netwatch"
+    - "register_device"
+    - "remove_device"
+    - "add_ip_address"
+    - "remove_ip_address"
+    - "set_ip_address"
+
+confirmation:
+  timeout_seconds: 300
+  enable_inline_buttons: true
+  enable_text_replies: true        # Support text 'ya', 'setuju', 'batal'
+
+audit:
+  enabled: true
+  database_path: "data/audit.db"
+  jsonl_path: "logs/audit.jsonl"
+  retention_days: 90
+
+monitoring:
+  enabled: true
+  interval_seconds: 60
+  cpu_threshold_percent: 90
+  alert_chat_ids: []
